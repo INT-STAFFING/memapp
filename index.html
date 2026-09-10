@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MalesAPP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pitch-dark:   #0a1f12;
+      --pitch-stripe: rgba(255,255,255,.022);
+      --grass-bright: #52b788;
+      --gold:         #f0a500;
+      --gold-light:   #ffd166;
+      --accent:       #06d6a0;
+      --white:        #f4f7f5;
+      --muted:        #7aab90;
+      --card-bg:      rgba(10,31,18,.84);
+      --card-border:  rgba(82,183,136,.22);
+      --radius:       14px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--pitch-dark);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: repeating-linear-gradient(
+        180deg, transparent 0, transparent 70px,
+        var(--pitch-stripe) 70px, var(--pitch-stripe) 140px
+      );
+      pointer-events: none; z-index: 0;
+    }
+
+    .pitch-deco {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: min(680px, 100vw); height: min(680px, 100vw);
+      opacity: .042; pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      max-width: 860px; margin: 0 auto;
+      padding: 2.5rem 1.25rem 3rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── HEADER ── */
+    header { text-align: center; margin-bottom: 2rem; }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      letter-spacing: .06em; line-height: .88;
+      text-shadow: 0 0 60px rgba(82,183,136,.22);
+    }
+    h1 em { color: var(--gold); font-style: normal; }
+
+    .divider {
+      width: 60px; height: 2px; margin: 1.1rem auto 0;
+      background: linear-gradient(90deg, transparent, var(--grass-bright), transparent);
+    }
+
+    /* ── STATS BAR ── */
+    #statsbar {
+      display: none; flex-wrap: wrap; gap: .75rem;
+      justify-content: space-between; align-items: center;
+      margin-bottom: 1.6rem;
+    }
+    .chips { display: flex; gap: .7rem; flex-wrap: wrap; }
+    .chip {
+      display: flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--card-border);
+      border-radius: 2rem; padding: .32rem .85rem;
+      font-size: .8rem; color: var(--muted);
+    }
+    .chip strong { color: var(--white); font-family: 'Oswald', sans-serif; }
+
+    /* ── LOADING ── */
+    #loading {
+      text-align: center; padding: 4rem 1.5rem; color: var(--muted);
+    }
+    .spinner {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 3px solid rgba(82,183,136,.2);
+      border-top-color: var(--gold);
+      animation: spin .8s linear infinite; margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── EMPTY / ERROR ── */
+    #empty {
+      display: none; text-align: center;
+      padding: 3rem 1.5rem; color: var(--muted);
+    }
+    #empty .ico { font-size: 2.8rem; display: block; margin-bottom: .7rem; }
+
+    #errorbox {
+      display: none;
+      background: rgba(230,57,70,.1); border: 1px solid rgba(230,57,70,.3);
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      color: #e63946; font-size: .85rem; margin-bottom: 1.2rem;
+    }
+
+    /* ── TRACK LIST ── */
+    #tracks { display: none; grid-gap: .85rem; }
+
+    /* ── TRACK CARD ── */
+    .track-card {
+      display: flex; align-items: center; gap: 1.25rem;
+      padding: 1rem 1.4rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(14px);
+      transition: border-color .25s, box-shadow .25s;
+      position: relative; overflow: hidden;
+    }
+    .track-card:hover {
+      border-color: rgba(82,183,136,.45);
+      box-shadow: 0 8px 28px rgba(0,0,0,.3);
+    }
+    .track-card.playing {
+      border-color: var(--gold);
+      box-shadow: 0 8px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(240,165,0,.2);
+    }
+
+    /* ── PALLONE ── */
+    .ball-btn {
+      width: 70px; height: 70px; flex-shrink: 0;
+      border-radius: 50%; border: none; cursor: pointer;
+      position: relative; overflow: hidden; padding: 0;
+      background: transparent;
+      box-shadow:
+        0 7px 0 rgba(0,0,0,.65),
+        0 10px 20px rgba(0,0,0,.5);
+      transition: transform .08s ease, box-shadow .08s ease;
+    }
+    .ball-btn:hover {
+      box-shadow:
+        0 9px 0 rgba(0,0,0,.65),
+        0 13px 26px rgba(0,0,0,.55);
+    }
+    .ball-btn:active {
+      transform: translateY(6px);
+      box-shadow:
+        0 1px 0 rgba(0,0,0,.65),
+        0 3px 8px rgba(0,0,0,.5);
+    }
+    .ball-btn .ball-svg { width: 100%; height: 100%; display: block; }
+
+    .ball-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.3);
+      opacity: 0; transition: opacity .2s;
+    }
+    .ball-btn:hover .ball-overlay { opacity: 1; }
+    .track-card.playing .ball-btn .ball-overlay { opacity: 1; }
+    .ball-overlay svg {
+      width: 22px; height: 22px; fill: white;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,.6));
+    }
+
+    /* ── INFO TRACCIA ── */
+    .track-info { flex: 1; min-width: 0; }
+    .track-title-row {
+      display: flex; align-items: center; gap: .55rem; flex-wrap: wrap;
+    }
+    .track-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      line-height: 1.35; word-break: break-word;
+      color: var(--white);
+    }
+    .badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: .68rem; font-weight: 600; letter-spacing: .05em;
+      color: var(--muted);
+      border: 1px solid var(--card-border);
+      border-radius: 4px; padding: .1rem .45rem;
+      flex-shrink: 0;
+    }
+
+    /* ── AVANZAMENTO ── */
+    .progress-range {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px; margin-top: .6rem;
+      background: rgba(255,255,255,.1); border-radius: 2px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+    .progress-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--gold); cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(240,165,0,.2);
+    }
+    .progress-range::-moz-range-thumb {
+      width: 12px; height: 12px; border: none; border-radius: 50%;
+      background: var(--gold); cursor: pointer;
+    }
+    .time-row {
+      display: flex; justify-content: space-between;
+      font-family: 'Oswald', sans-serif;
+      font-size: .78rem; color: var(--muted); margin-top: .35rem;
+    }
+    .time-row .track-dur.error { color: #e63946; }
+
+    /* ── BARRE EQUALIZZATORE ── */
+    .bars {
+      display: none; align-items: flex-end;
+      gap: 3px; height: 22px; flex-shrink: 0;
+    }
+    .bars span {
+      width: 3px; border-radius: 2px; background: var(--gold);
+      animation: barBounce .75s ease-in-out infinite alternate;
+    }
+    .bars span:nth-child(1){ height:40%; animation-delay:0s; }
+    .bars span:nth-child(2){ height:100%; animation-delay:.18s; }
+    .bars span:nth-child(3){ height:60%; animation-delay:.32s; }
+    .bars span:nth-child(4){ height:80%; animation-delay:.1s; }
+    @keyframes barBounce { from{transform:scaleY(.35)} to{transform:scaleY(1)} }
+    .track-card.playing .bars { display: flex; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; margin-top: 3rem;
+      font-size: .78rem; color: rgba(122,171,144,.45);
+    }
+    footer em { color: var(--gold); font-style: normal; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .ball-btn { width: 58px; height: 58px; }
+      .track-title { font-size: .9rem; }
+      .bars { display: none !important; }
+      #statsbar { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <svg class="pitch-deco" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="50" y="50" width="400" height="400" stroke="white" stroke-width="3"/>
+    <circle cx="250" cy="250" r="200" stroke="white" stroke-width="3"/>
+    <circle cx="250" cy="250" r="30"  stroke="white" stroke-width="3"/>
+    <line x1="50" y1="250" x2="450" y2="250" stroke="white" stroke-width="3"/>
+    <rect x="170" y="50"  width="160" height="60" stroke="white" stroke-width="2"/>
+    <rect x="170" y="390" width="160" height="60" stroke="white" stroke-width="2"/>
+    <circle cx="250" cy="250" r="4" fill="white"/>
+  </svg>
+
+  <div class="container">
+
+    <header>
+      <h1>Males<em>APP</em></h1>
+      <div class="divider"></div>
+    </header>
+
+    <div id="errorbox"></div>
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Caricamento tracce…</p>
+    </div>
+
+    <div id="statsbar">
+      <div class="chips">
+        <div class="chip">🎵 Tracce: <strong id="count">0</strong></div>
+        <div class="chip">▶ In onda: <strong id="now-playing" aria-live="polite">—</strong></div>
+      </div>
+    </div>
+
+    <div id="empty">
+      <span class="ico">🔇</span>
+      <p>Nessuna traccia disponibile.</p>
+    </div>
+
+    <div id="tracks"></div>
+
+    <footer>MalesAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
+  </div>
+
+  <script>
+  (() => {
+    const ICO_PLAY  = `<svg viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>`;
+    const ICO_PAUSE = `<svg viewBox="0 0 24 24" fill="white"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="14" y="3" width="4" height="18" rx="1"/></svg>`;
+
+    let tracks      = [];
+    let activeAudio = null;
+    let uid = 0;
+
+    /* ── SVG pallone da calcio ── */
+    function ballSVG(id) {
+      return `<svg class="ball-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="bg${id}" cx="36%" cy="30%" r="68%">
+            <stop offset="0%"   stop-color="#f8f8f8"/>
+            <stop offset="100%" stop-color="#aaaaaa"/>
+          </radialGradient>
+          <clipPath id="cl${id}"><circle cx="50" cy="50" r="46"/></clipPath>
+        </defs>
+        <circle cx="50" cy="50" r="48" fill="#111"/>
+        <circle cx="50" cy="50" r="46" fill="url(#bg${id})"/>
+        <g clip-path="url(#cl${id})" fill="#111" opacity=".85">
+          <polygon points="50,29 63,39 58,54 42,54 37,39"/>
+          <polygon points="50,4  62,13 59,27 41,27 38,13"/>
+          <polygon points="77,22 83,36 73,44 62,38 63,23"/>
+          <polygon points="79,59 74,73 61,75 55,62 66,53"/>
+          <polygon points="21,59 34,53 45,62 39,75 26,73"/>
+          <polygon points="23,22 37,23 38,38 27,44 17,36"/>
+        </g>
+        <circle cx="50" cy="50" r="46" fill="none" stroke="#444" stroke-width="1"/>
+      </svg>`;
+    }
+
+    function fmtTime(s) {
+      if (!isFinite(s) || isNaN(s)) return '—:——';
+      return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorbox');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    function setUI(state) {
+      document.getElementById('loading').style.display  = state === 'loading' ? 'block' : 'none';
+      document.getElementById('statsbar').style.display = state === 'loaded'  ? 'flex'  : 'none';
+      document.getElementById('tracks').style.display   = state === 'loaded'  ? 'grid'  : 'none';
+      document.getElementById('empty').style.display    = state === 'empty'   ? 'block' : 'none';
+    }
+
+    function stopAll() {
+      if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
+      document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+      document.querySelectorAll('.ball-overlay').forEach(o => o.innerHTML = ICO_PLAY);
+      document.querySelectorAll('.ball-btn').forEach(b => {
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-label', (b.getAttribute('aria-label') || '').replace(/^Pausa/, 'Riproduci'));
+      });
+      document.querySelectorAll('.progress-range').forEach(r => r.value = 0);
+      document.querySelectorAll('.time-row span[id^="cur"]').forEach(t => t.textContent = '0:00');
+      document.getElementById('now-playing').textContent = '—';
+      activeAudio = null;
+    }
+
+    function renderTracks() {
+      const grid = document.getElementById('tracks');
+      grid.innerHTML = '';
+      tracks.forEach((t, i) => grid.appendChild(buildCard(t, i)));
+    }
+
+    function buildCard(track) {
+      const id   = uid++;
+      const card = document.createElement('div');
+      card.className = 'track-card';
+      const badge = track.badge || (track.file.split('.').pop() || '').toUpperCase();
+      card.innerHTML = `
+        <button class="ball-btn" aria-pressed="false" aria-label="Riproduci ${escHtml(track.name)}">
+          ${ballSVG(id)}
+          <div class="ball-overlay">${ICO_PLAY}</div>
+        </button>
+        <div class="track-info">
+          <div class="track-title-row">
+            <div class="track-title">${escHtml(track.name)}</div>
+            ${badge ? `<span class="badge">${escHtml(badge)}</span>` : ''}
+          </div>
+          <input type="range" class="progress-range" id="rng${id}" min="0" max="100" value="0" step="0.1" aria-label="Posizione riproduzione">
+          <div class="time-row">
+            <span id="cur${id}">0:00</span>
+            <span class="track-dur" id="dur${id}">—:——</span>
+          </div>
+        </div>
+        <div class="bars"><span></span><span></span><span></span><span></span></div>`;
+
+      // Codifica il nome del file per l'URL (gestisce spazi e caratteri speciali)
+      const src     = track.file.split('/').map(encodeURIComponent).join('/');
+      const audio   = new Audio();
+      audio.preload = 'metadata'; // evita di scaricare l'intero file per ogni traccia al caricamento
+      audio.src     = src;
+
+      const ballBtn = card.querySelector('.ball-btn');
+      const overlay = card.querySelector('.ball-overlay');
+      const durEl   = card.querySelector('#dur' + id);
+      const curEl   = card.querySelector('#cur' + id);
+      const rng     = card.querySelector('#rng' + id);
+
+      function resetProgress() {
+        rng.value = 0;
+        curEl.textContent = '0:00';
+      }
+
+      audio.addEventListener('loadedmetadata', () => {
+        durEl.textContent = fmtTime(audio.duration);
+      });
+      audio.addEventListener('error', () => {
+        durEl.textContent = 'Errore caricamento';
+        durEl.classList.add('error');
+      });
+      audio.addEventListener('timeupdate', () => {
+        curEl.textContent = fmtTime(audio.currentTime);
+        if (isFinite(audio.duration) && audio.duration > 0) {
+          rng.value = (audio.currentTime / audio.duration) * 100;
+        }
+      });
+      audio.addEventListener('ended', () => {
+        audio.currentTime = 0;
+        card.classList.remove('playing');
+        overlay.innerHTML = ICO_PLAY;
+        ballBtn.setAttribute('aria-pressed', 'false');
+        ballBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
+        resetProgress();
+        document.getElementById('now-playing').textContent = '—';
+        activeAudio = null;
+      });
+
+      rng.addEventListener('input', () => {
+        if (isFinite(audio.duration) && audio.duration > 0) {
+          audio.currentTime = (rng.value / 100) * audio.duration;
+        }
+      });
+
+      ballBtn.addEventListener('click', () => {
+        if (activeAudio && activeAudio !== audio) stopAll();
+        if (audio.paused) {
+          audio.play().catch(() => {});
+          card.classList.add('playing');
+          overlay.innerHTML = ICO_PAUSE;
+          ballBtn.setAttribute('aria-pressed', 'true');
+          ballBtn.setAttribute('aria-label', 'Pausa ' + track.name);
+          activeAudio = audio;
+          const label = track.name.length > 36
+            ? track.name.slice(0, 36) + '…'
+            : track.name;
+          document.getElementById('now-playing').textContent = label;
+        } else {
+          audio.pause();
+          card.classList.remove('playing');
+          overlay.innerHTML = ICO_PLAY;
+          ballBtn.setAttribute('aria-pressed', 'false');
+          ballBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
+          document.getElementById('now-playing').textContent = '—';
+        }
+      });
+
+      return card;
+    }
+
+    function escHtml(s) {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    /* ── avvio: carica tracks.json ── */
+    (async () => {
+      setUI('loading');
+      try {
+        const r = await fetch('tracks.json');
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        tracks = await r.json();
+      } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        showError('Impossibile caricare le tracce: ' + e.message);
+        return;
+      }
+
+      if (tracks.length === 0) { setUI('empty'); return; }
+
+      document.getElementById('count').textContent = tracks.length;
+      renderTracks();
+      setUI('loaded');
+    })();
+
+  })();
+  </script>
+</body>
+</html>
