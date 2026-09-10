@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MalesAPP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
       --pitch-dark:   #0a1f12;
@@ -16,6 +16,8 @@
       --accent:       #06d6a0;
       --white:        #f4f7f5;
       --muted:        #7aab90;
+      --panel:        #071b10;
+      --panel-border: rgba(82,183,136,.24);
       --card-bg:      rgba(10,31,18,.84);
       --card-border:  rgba(82,183,136,.22);
       --radius:       14px;
@@ -49,13 +51,20 @@
     }
 
     .container {
-      max-width: 860px; margin: 0 auto;
+      max-width: 1080px; margin: 0 auto;
       padding: 2.5rem 1.25rem 3rem;
       position: relative; z-index: 1;
     }
 
     /* ── HEADER ── */
     header { text-align: center; margin-bottom: 2rem; }
+
+    .eyebrow {
+      display: block;
+      font-family: 'Oswald', sans-serif;
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .18em; color: var(--muted); margin-bottom: .6rem;
+    }
 
     h1 {
       font-family: 'Bebas Neue', sans-serif;
@@ -69,22 +78,6 @@
       width: 60px; height: 2px; margin: 1.1rem auto 0;
       background: linear-gradient(90deg, transparent, var(--grass-bright), transparent);
     }
-
-    /* ── STATS BAR ── */
-    #statsbar {
-      display: none; flex-wrap: wrap; gap: .75rem;
-      justify-content: space-between; align-items: center;
-      margin-bottom: 1.6rem;
-    }
-    .chips { display: flex; gap: .7rem; flex-wrap: wrap; }
-    .chip {
-      display: flex; align-items: center; gap: .4rem;
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--card-border);
-      border-radius: 2rem; padding: .32rem .85rem;
-      font-size: .8rem; color: var(--muted);
-    }
-    .chip strong { color: var(--white); font-family: 'Oswald', sans-serif; }
 
     /* ── LOADING ── */
     #loading {
@@ -112,140 +105,196 @@
       color: #e63946; font-size: .85rem; margin-bottom: 1.2rem;
     }
 
-    /* ── TRACK LIST ── */
-    #tracks { display: none; grid-gap: .85rem; }
-
-    /* ── TRACK CARD ── */
-    .track-card {
-      display: flex; align-items: center; gap: 1.25rem;
-      padding: 1rem 1.4rem;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+    /* ── BARRA DI CONTROLLO ── */
+    #control-bar {
+      display: none;
+      align-items: center; flex-wrap: wrap; gap: 1.25rem 2rem;
+      justify-content: space-between;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
       border-radius: var(--radius);
-      backdrop-filter: blur(14px);
-      transition: border-color .25s, box-shadow .25s;
-      position: relative; overflow: hidden;
+      padding: 1.1rem 1.5rem;
+      margin-bottom: 1.5rem;
     }
-    .track-card:hover {
-      border-color: rgba(82,183,136,.45);
-      box-shadow: 0 8px 28px rgba(0,0,0,.3);
+    .cb-status { display: flex; align-items: center; gap: .9rem; min-width: 0; flex: 1; }
+    .led {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+      background: var(--muted); box-shadow: 0 0 0 3px rgba(122,171,144,.15);
+      transition: background .3s, box-shadow .3s;
     }
-    .track-card.playing {
-      border-color: var(--gold);
-      box-shadow: 0 8px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(240,165,0,.2);
+    #control-bar.active .led {
+      background: var(--gold);
+      box-shadow: 0 0 0 3px rgba(240,165,0,.2);
+      animation: ledPulse 1s ease-in-out infinite;
+    }
+    @keyframes ledPulse { 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
+    .cb-text { min-width: 0; }
+    .cb-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: .68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .14em; color: var(--muted);
+    }
+    .cb-value {
+      font-family: 'Oswald', sans-serif; font-weight: 600;
+      font-size: 1.02rem; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; max-width: 44vw;
     }
 
-    /* ── PALLONE ── */
-    .ball-btn {
-      width: 70px; height: 70px; flex-shrink: 0;
+    .master-eq { display: flex; align-items: flex-end; gap: 3px; height: 24px; flex-shrink: 0; }
+    .master-eq span {
+      width: 3px; border-radius: 2px; background: var(--gold);
+      opacity: .18; transition: opacity .25s;
+    }
+    #control-bar.active .master-eq span {
+      opacity: 1; animation: barBounce .75s ease-in-out infinite alternate;
+    }
+    .master-eq span:nth-child(1){ height:35%; animation-delay:0s; }
+    .master-eq span:nth-child(2){ height:75%; animation-delay:.12s; }
+    .master-eq span:nth-child(3){ height:100%; animation-delay:.28s; }
+    .master-eq span:nth-child(4){ height:55%; animation-delay:.16s; }
+    .master-eq span:nth-child(5){ height:85%; animation-delay:.34s; }
+    @keyframes barBounce { from{ transform:scaleY(.3) } to{ transform:scaleY(1) } }
+
+    .cb-stats { display: flex; gap: 1.75rem; flex-shrink: 0; }
+    .stat-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: .64rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--muted);
+    }
+    .stat-value {
+      font-family: 'Oswald', sans-serif; font-weight: 700;
+      font-size: 1.5rem; line-height: 1.1; letter-spacing: -.02em;
+    }
+    .stat-value.accent { color: var(--gold); }
+
+    /* ── PANNELLO / GRIGLIA ── */
+    .panel {
+      display: none;
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: clamp(24px,4vw,44px) clamp(18px,3vw,32px);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .panel-lines { position: absolute; inset: 0; opacity: .09; pointer-events: none; }
+
+    #tracks {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 1.9rem 1.1rem;
+    }
+
+    /* ── TILE ── */
+    .tile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .55rem; }
+
+    .pad-btn {
+      width: 78px; height: 78px; flex-shrink: 0;
       border-radius: 50%; border: none; cursor: pointer;
       position: relative; overflow: hidden; padding: 0;
       background: transparent;
-      box-shadow:
-        0 7px 0 rgba(0,0,0,.65),
-        0 10px 20px rgba(0,0,0,.5);
+      box-shadow: 0 6px 0 rgba(0,0,0,.6), 0 9px 18px rgba(0,0,0,.45);
       transition: transform .08s ease, box-shadow .08s ease;
     }
-    .ball-btn:hover {
-      box-shadow:
-        0 9px 0 rgba(0,0,0,.65),
-        0 13px 26px rgba(0,0,0,.55);
+    .pad-btn:hover { box-shadow: 0 8px 0 rgba(0,0,0,.6), 0 11px 22px rgba(0,0,0,.5); }
+    .pad-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 1px 0 rgba(0,0,0,.6), 0 2px 7px rgba(0,0,0,.45);
     }
-    .ball-btn:active {
-      transform: translateY(6px);
-      box-shadow:
-        0 1px 0 rgba(0,0,0,.65),
-        0 3px 8px rgba(0,0,0,.5);
-    }
-    .ball-btn .ball-svg { width: 100%; height: 100%; display: block; }
+    .pad-btn .ball-svg { width: 100%; height: 100%; display: block; }
 
-    .ball-overlay {
+    .pad-overlay {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,.3);
+      background: rgba(0,0,0,.32);
       opacity: 0; transition: opacity .2s;
     }
-    .ball-btn:hover .ball-overlay { opacity: 1; }
-    .track-card.playing .ball-btn .ball-overlay { opacity: 1; }
-    .ball-overlay svg {
-      width: 22px; height: 22px; fill: white;
-      filter: drop-shadow(0 1px 3px rgba(0,0,0,.6));
+    .pad-btn:hover .pad-overlay { opacity: 1; }
+    .tile.playing .pad-btn .pad-overlay { opacity: 1; }
+    .pad-overlay svg { width: 20px; height: 20px; fill: white; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+    .tile.playing .pad-btn { box-shadow: 0 6px 0 rgba(0,0,0,.6), 0 0 0 3px rgba(240,165,0,.35), 0 9px 20px rgba(0,0,0,.5); }
+
+    .tile-title {
+      font-family: 'Oswald', sans-serif; font-size: .86rem; font-weight: 600;
+      line-height: 1.3; word-break: break-word; color: var(--white);
+    }
+    .tile-num { color: var(--gold); font-weight: 900; letter-spacing: .05em; }
+    .tile-badge {
+      display: inline-block; margin-left: .3rem;
+      font-size: .6rem; font-weight: 600; letter-spacing: .05em;
+      color: var(--muted); border: 1px solid var(--panel-border);
+      border-radius: 4px; padding: .04rem .35rem; vertical-align: middle;
     }
 
-    /* ── INFO TRACCIA ── */
-    .track-info { flex: 1; min-width: 0; }
-    .track-title-row {
-      display: flex; align-items: center; gap: .55rem; flex-wrap: wrap;
-    }
-    .track-title {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1rem; font-weight: 600;
-      line-height: 1.35; word-break: break-word;
-      color: var(--white);
-    }
-    .badge {
-      font-family: 'Oswald', sans-serif;
-      font-size: .68rem; font-weight: 600; letter-spacing: .05em;
-      color: var(--muted);
-      border: 1px solid var(--card-border);
-      border-radius: 4px; padding: .1rem .45rem;
-      flex-shrink: 0;
-    }
-
-    /* ── AVANZAMENTO ── */
     .progress-range {
       -webkit-appearance: none; appearance: none;
-      width: 100%; height: 4px; margin-top: .6rem;
+      width: 100%; height: 3px; margin-top: .15rem;
       background: rgba(255,255,255,.1); border-radius: 2px;
-      accent-color: var(--gold);
-      cursor: pointer;
+      accent-color: var(--gold); cursor: pointer;
     }
     .progress-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--gold); cursor: pointer;
-      box-shadow: 0 0 0 3px rgba(240,165,0,.2);
+      -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--gold); cursor: pointer; box-shadow: 0 0 0 3px rgba(240,165,0,.2);
     }
     .progress-range::-moz-range-thumb {
-      width: 12px; height: 12px; border: none; border-radius: 50%;
-      background: var(--gold); cursor: pointer;
+      width: 10px; height: 10px; border: none; border-radius: 50%; background: var(--gold); cursor: pointer;
     }
     .time-row {
-      display: flex; justify-content: space-between;
-      font-family: 'Oswald', sans-serif;
-      font-size: .78rem; color: var(--muted); margin-top: .35rem;
+      display: flex; justify-content: space-between; width: 100%;
+      font-family: 'Oswald', sans-serif; font-size: .68rem; color: var(--muted);
     }
     .time-row .track-dur.error { color: #e63946; }
 
-    /* ── BARRE EQUALIZZATORE ── */
-    .bars {
-      display: none; align-items: flex-end;
-      gap: 3px; height: 22px; flex-shrink: 0;
+    .playcount {
+      display: inline-flex; align-items: center; gap: .35rem;
+      border: 1px solid var(--panel-border); border-radius: 4px;
+      padding: .15rem .5rem; margin-top: .1rem;
     }
-    .bars span {
-      width: 3px; border-radius: 2px; background: var(--gold);
-      animation: barBounce .75s ease-in-out infinite alternate;
+    .playcount .pc-label {
+      font-family: 'Oswald', sans-serif; font-size: .6rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
     }
-    .bars span:nth-child(1){ height:40%; animation-delay:0s; }
-    .bars span:nth-child(2){ height:100%; animation-delay:.18s; }
-    .bars span:nth-child(3){ height:60%; animation-delay:.32s; }
-    .bars span:nth-child(4){ height:80%; animation-delay:.1s; }
-    @keyframes barBounce { from{transform:scaleY(.35)} to{transform:scaleY(1)} }
-    .track-card.playing .bars { display: flex; }
+    .playcount .pc-value { font-family: 'Oswald', sans-serif; font-size: .74rem; font-weight: 700; color: var(--gold); }
+
+    /* ── BARRA INFERIORE ── */
+    .footer-bar {
+      display: none;
+      flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 1rem; padding: .9rem 1.4rem;
+      border: 1px solid var(--card-border); border-radius: var(--radius);
+      background: var(--card-bg); margin-bottom: 2rem;
+    }
+    .footer-note {
+      font-family: 'Oswald', sans-serif; font-size: .68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+    }
+    .footer-actions { display: flex; gap: .7rem; }
+    .fbtn {
+      font-family: 'Oswald', sans-serif; font-size: .78rem; font-weight: 600;
+      letter-spacing: .03em; padding: .5rem 1.1rem; border-radius: 6px;
+      cursor: pointer; transition: opacity .2s, border-color .2s;
+    }
+    .fbtn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--card-border); }
+    .fbtn-ghost:hover { color: var(--white); border-color: rgba(82,183,136,.5); }
+    .fbtn-solid { background: var(--gold); color: #241300; border: 1px solid var(--gold); }
+    .fbtn-solid:hover { opacity: .88; }
 
     /* ── FOOTER ── */
-    footer {
-      text-align: center; margin-top: 3rem;
-      font-size: .78rem; color: rgba(122,171,144,.45);
-    }
+    footer { text-align: center; font-size: .78rem; color: rgba(122,171,144,.45); }
     footer em { color: var(--gold); font-style: normal; }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .master-eq { display: none; }
+      .cb-value { max-width: 60vw; }
+    }
     @media (max-width: 480px) {
-      .ball-btn { width: 58px; height: 58px; }
-      .track-title { font-size: .9rem; }
-      .bars { display: none !important; }
-      #statsbar { flex-direction: column; align-items: flex-start; }
+      .pad-btn { width: 64px; height: 64px; }
+      .tile-title { font-size: .8rem; }
+      #control-bar { justify-content: flex-start; }
+      .cb-stats { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
@@ -264,6 +313,7 @@
   <div class="container">
 
     <header>
+      <span class="eyebrow">Effetti sonori · Stadio</span>
       <h1>Males<em>APP</em></h1>
       <div class="divider"></div>
     </header>
@@ -275,10 +325,24 @@
       <p>Caricamento tracce…</p>
     </div>
 
-    <div id="statsbar">
-      <div class="chips">
-        <div class="chip">🎵 Tracce: <strong id="count">0</strong></div>
-        <div class="chip">▶ In onda: <strong id="now-playing" aria-live="polite">—</strong></div>
+    <div id="control-bar">
+      <div class="cb-status">
+        <span class="led" id="led"></span>
+        <div class="cb-text">
+          <div class="cb-label">In riproduzione</div>
+          <div class="cb-value" id="now-playing" aria-live="polite">— in attesa —</div>
+        </div>
+      </div>
+      <div class="master-eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="cb-stats">
+        <div class="stat">
+          <div class="stat-label">Tracce</div>
+          <div class="stat-value" id="count">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Riproduzioni</div>
+          <div class="stat-value accent" id="total-plays">0</div>
+        </div>
       </div>
     </div>
 
@@ -287,7 +351,22 @@
       <p>Nessuna traccia disponibile.</p>
     </div>
 
-    <div id="tracks"></div>
+    <div class="panel" id="panel">
+      <svg class="panel-lines" viewBox="0 0 600 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="150" x2="600" y2="150" stroke="white" stroke-width="1.5" stroke-dasharray="10 10"/>
+        <path d="M0,0 A60,60 0 0,1 60,0" stroke="white" stroke-width="1.5" fill="none"/>
+        <path d="M600,300 A60,60 0 0,1 540,300" stroke="white" stroke-width="1.5" fill="none"/>
+      </svg>
+      <div id="tracks"></div>
+    </div>
+
+    <div class="footer-bar" id="footer-bar">
+      <span class="footer-note">Contatori salvati su questo dispositivo</span>
+      <div class="footer-actions">
+        <button type="button" class="fbtn fbtn-ghost" id="btn-reset">Azzera contatori</button>
+        <button type="button" class="fbtn fbtn-solid" id="btn-stop">Stop</button>
+      </div>
+    </div>
 
     <footer>MalesAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
   </div>
@@ -296,10 +375,14 @@
   (() => {
     const ICO_PLAY  = `<svg viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>`;
     const ICO_PAUSE = `<svg viewBox="0 0 24 24" fill="white"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="14" y="3" width="4" height="18" rx="1"/></svg>`;
+    const COUNTS_KEY = 'malesapp-playcounts';
 
     let tracks      = [];
     let activeAudio = null;
     let uid = 0;
+    let playCounts = {};
+
+    try { playCounts = JSON.parse(localStorage.getItem(COUNTS_KEY)) || {}; } catch (e) { playCounts = {}; }
 
     /* ── SVG pallone da calcio ── */
     function ballSVG(id) {
@@ -337,54 +420,70 @@
     }
 
     function setUI(state) {
-      document.getElementById('loading').style.display  = state === 'loading' ? 'block' : 'none';
-      document.getElementById('statsbar').style.display = state === 'loaded'  ? 'flex'  : 'none';
-      document.getElementById('tracks').style.display   = state === 'loaded'  ? 'grid'  : 'none';
-      document.getElementById('empty').style.display    = state === 'empty'   ? 'block' : 'none';
+      document.getElementById('loading').style.display     = state === 'loading' ? 'block' : 'none';
+      document.getElementById('control-bar').style.display  = state === 'loaded'  ? 'flex'  : 'none';
+      document.getElementById('panel').style.display        = state === 'loaded'  ? 'block' : 'none';
+      document.getElementById('footer-bar').style.display   = state === 'loaded'  ? 'flex'  : 'none';
+      document.getElementById('empty').style.display        = state === 'empty'   ? 'block' : 'none';
+    }
+
+    function persistCounts() {
+      try { localStorage.setItem(COUNTS_KEY, JSON.stringify(playCounts)); } catch (e) { /* storage non disponibile */ }
+    }
+
+    function totalPlays() {
+      return Object.values(playCounts).reduce((a, b) => a + b, 0);
+    }
+
+    function updateTotalPlays() {
+      document.getElementById('total-plays').textContent = totalPlays();
     }
 
     function stopAll() {
       if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
-      document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
-      document.querySelectorAll('.ball-overlay').forEach(o => o.innerHTML = ICO_PLAY);
-      document.querySelectorAll('.ball-btn').forEach(b => {
+      document.querySelectorAll('.tile').forEach(t => t.classList.remove('playing'));
+      document.querySelectorAll('.pad-overlay').forEach(o => o.innerHTML = ICO_PLAY);
+      document.querySelectorAll('.pad-btn').forEach(b => {
         b.setAttribute('aria-pressed', 'false');
         b.setAttribute('aria-label', (b.getAttribute('aria-label') || '').replace(/^Pausa/, 'Riproduci'));
       });
       document.querySelectorAll('.progress-range').forEach(r => r.value = 0);
       document.querySelectorAll('.time-row span[id^="cur"]').forEach(t => t.textContent = '0:00');
-      document.getElementById('now-playing').textContent = '—';
+      document.getElementById('now-playing').textContent = '— in attesa —';
+      document.getElementById('control-bar').classList.remove('active');
       activeAudio = null;
     }
 
     function renderTracks() {
       const grid = document.getElementById('tracks');
       grid.innerHTML = '';
-      tracks.forEach((t, i) => grid.appendChild(buildCard(t, i)));
+      tracks.forEach((t, i) => grid.appendChild(buildTile(t, i)));
+      updateTotalPlays();
     }
 
-    function buildCard(track) {
+    function buildTile(track, index) {
       const id   = uid++;
-      const card = document.createElement('div');
-      card.className = 'track-card';
+      const tile = document.createElement('div');
+      tile.className = 'tile';
       const badge = track.badge || (track.file.split('.').pop() || '').toUpperCase();
-      card.innerHTML = `
-        <button class="ball-btn" aria-pressed="false" aria-label="Riproduci ${escHtml(track.name)}">
+      const num   = String(index + 1).padStart(2, '0');
+      const count = playCounts[track.file] || 0;
+
+      tile.innerHTML = `
+        <button class="pad-btn" aria-pressed="false" aria-label="Riproduci ${escHtml(track.name)}">
           ${ballSVG(id)}
-          <div class="ball-overlay">${ICO_PLAY}</div>
+          <span class="pad-overlay">${ICO_PLAY}</span>
         </button>
-        <div class="track-info">
-          <div class="track-title-row">
-            <div class="track-title">${escHtml(track.name)}</div>
-            ${badge ? `<span class="badge">${escHtml(badge)}</span>` : ''}
-          </div>
-          <input type="range" class="progress-range" id="rng${id}" min="0" max="100" value="0" step="0.1" aria-label="Posizione riproduzione">
-          <div class="time-row">
-            <span id="cur${id}">0:00</span>
-            <span class="track-dur" id="dur${id}">—:——</span>
-          </div>
+        <div class="tile-title"><span class="tile-num">${num}</span> ${escHtml(track.name)}${badge ? `<span class="tile-badge">${escHtml(badge)}</span>` : ''}</div>
+        <input type="range" class="progress-range" id="rng${id}" min="0" max="100" value="0" step="0.1" aria-label="Posizione riproduzione">
+        <div class="time-row">
+          <span id="cur${id}">0:00</span>
+          <span class="track-dur" id="dur${id}">—:——</span>
         </div>
-        <div class="bars"><span></span><span></span><span></span><span></span></div>`;
+        <div class="playcount">
+          <span class="pc-label">play</span>
+          <span class="pc-value" id="pc${id}">${count}</span>
+        </div>`;
 
       // Codifica il nome del file per l'URL (gestisce spazi e caratteri speciali)
       const src     = track.file.split('/').map(encodeURIComponent).join('/');
@@ -392,11 +491,12 @@
       audio.preload = 'metadata'; // evita di scaricare l'intero file per ogni traccia al caricamento
       audio.src     = src;
 
-      const ballBtn = card.querySelector('.ball-btn');
-      const overlay = card.querySelector('.ball-overlay');
-      const durEl   = card.querySelector('#dur' + id);
-      const curEl   = card.querySelector('#cur' + id);
-      const rng     = card.querySelector('#rng' + id);
+      const padBtn  = tile.querySelector('.pad-btn');
+      const overlay = tile.querySelector('.pad-overlay');
+      const durEl   = tile.querySelector('#dur' + id);
+      const curEl   = tile.querySelector('#cur' + id);
+      const rng     = tile.querySelector('#rng' + id);
+      const pcEl    = tile.querySelector('#pc' + id);
 
       function resetProgress() {
         rng.value = 0;
@@ -418,12 +518,13 @@
       });
       audio.addEventListener('ended', () => {
         audio.currentTime = 0;
-        card.classList.remove('playing');
+        tile.classList.remove('playing');
         overlay.innerHTML = ICO_PLAY;
-        ballBtn.setAttribute('aria-pressed', 'false');
-        ballBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
+        padBtn.setAttribute('aria-pressed', 'false');
+        padBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
         resetProgress();
-        document.getElementById('now-playing').textContent = '—';
+        document.getElementById('now-playing').textContent = '— in attesa —';
+        document.getElementById('control-bar').classList.remove('active');
         activeAudio = null;
       });
 
@@ -433,30 +534,36 @@
         }
       });
 
-      ballBtn.addEventListener('click', () => {
+      padBtn.addEventListener('click', () => {
         if (activeAudio && activeAudio !== audio) stopAll();
         if (audio.paused) {
           audio.play().catch(() => {});
-          card.classList.add('playing');
+          tile.classList.add('playing');
           overlay.innerHTML = ICO_PAUSE;
-          ballBtn.setAttribute('aria-pressed', 'true');
-          ballBtn.setAttribute('aria-label', 'Pausa ' + track.name);
+          padBtn.setAttribute('aria-pressed', 'true');
+          padBtn.setAttribute('aria-label', 'Pausa ' + track.name);
           activeAudio = audio;
-          const label = track.name.length > 36
-            ? track.name.slice(0, 36) + '…'
-            : track.name;
+
+          playCounts[track.file] = (playCounts[track.file] || 0) + 1;
+          pcEl.textContent = playCounts[track.file];
+          persistCounts();
+          updateTotalPlays();
+
+          const label = track.name.length > 36 ? track.name.slice(0, 36) + '…' : track.name;
           document.getElementById('now-playing').textContent = label;
+          document.getElementById('control-bar').classList.add('active');
         } else {
           audio.pause();
-          card.classList.remove('playing');
+          tile.classList.remove('playing');
           overlay.innerHTML = ICO_PLAY;
-          ballBtn.setAttribute('aria-pressed', 'false');
-          ballBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
-          document.getElementById('now-playing').textContent = '—';
+          padBtn.setAttribute('aria-pressed', 'false');
+          padBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
+          document.getElementById('now-playing').textContent = '— in attesa —';
+          document.getElementById('control-bar').classList.remove('active');
         }
       });
 
-      return card;
+      return tile;
     }
 
     function escHtml(s) {
@@ -465,6 +572,14 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
     }
+
+    document.getElementById('btn-stop').addEventListener('click', stopAll);
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      playCounts = {};
+      persistCounts();
+      document.querySelectorAll('.pc-value').forEach(el => el.textContent = '0');
+      updateTotalPlays();
+    });
 
     /* ── avvio: carica tracks.json ── */
     (async () => {

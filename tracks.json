@@ -1,7 +1,47 @@
 [
   {
-    "name": "Storico sfogo di Alberto Malesani al Panathinaikos durante una Conferenza Stampa",
-    "file": "audio/Storico sfogo di Alberto Malesani al Panathinaikos durante una Conferenza Stampa.wav",
-    "badge": "WAV"
+    "name": "12 anni 24 allenatori",
+    "file": "audio/12 anni 24 allenatori.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "Domande del cazzo sempre",
+    "file": "audio/Domande del cazzo sempre.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "E ridono ridono",
+    "file": "audio/E ridono ridono.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "E ridono ridono - breve",
+    "file": "audio/E ridono ridono - breve.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "Fatela finita",
+    "file": "audio/Fatela finita.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "Io son la 24 ore al giono",
+    "file": "audio/Io son la 24 ore al giono.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "lavoro 24 ore al giorno",
+    "file": "audio/lavoro 24 ore al giorno.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "ma fatemi un piacere da su",
+    "file": "audio/ma fatemi un piacere da su.mp3",
+    "badge": "MP3"
+  },
+  {
+    "name": "non è possibile una roba del genere",
+    "file": "audio/non è possibile una roba del genere.mp3",
+    "badge": "MP3"
   }
 ]
