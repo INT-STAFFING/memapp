@@ -105,68 +105,6 @@
       color: #e63946; font-size: .85rem; margin-bottom: 1.2rem;
     }
 
-    /* ── BARRA DI CONTROLLO ── */
-    #control-bar {
-      display: none;
-      align-items: center; flex-wrap: wrap; gap: 1.25rem 2rem;
-      justify-content: space-between;
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .cb-status { display: flex; align-items: center; gap: .9rem; min-width: 0; flex: 1; }
-    .led {
-      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-      background: var(--muted); box-shadow: 0 0 0 3px rgba(122,171,144,.15);
-      transition: background .3s, box-shadow .3s;
-    }
-    #control-bar.active .led {
-      background: var(--gold);
-      box-shadow: 0 0 0 3px rgba(240,165,0,.2);
-      animation: ledPulse 1s ease-in-out infinite;
-    }
-    @keyframes ledPulse { 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
-    .cb-text { min-width: 0; }
-    .cb-label {
-      font-family: 'Oswald', sans-serif;
-      font-size: .68rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .14em; color: var(--muted);
-    }
-    .cb-value {
-      font-family: 'Oswald', sans-serif; font-weight: 600;
-      font-size: 1.02rem; white-space: nowrap; overflow: hidden;
-      text-overflow: ellipsis; max-width: 44vw;
-    }
-
-    .master-eq { display: flex; align-items: flex-end; gap: 3px; height: 24px; flex-shrink: 0; }
-    .master-eq span {
-      width: 3px; border-radius: 2px; background: var(--gold);
-      opacity: .18; transition: opacity .25s;
-    }
-    #control-bar.active .master-eq span {
-      opacity: 1; animation: barBounce .75s ease-in-out infinite alternate;
-    }
-    .master-eq span:nth-child(1){ height:35%; animation-delay:0s; }
-    .master-eq span:nth-child(2){ height:75%; animation-delay:.12s; }
-    .master-eq span:nth-child(3){ height:100%; animation-delay:.28s; }
-    .master-eq span:nth-child(4){ height:55%; animation-delay:.16s; }
-    .master-eq span:nth-child(5){ height:85%; animation-delay:.34s; }
-    @keyframes barBounce { from{ transform:scaleY(.3) } to{ transform:scaleY(1) } }
-
-    .cb-stats { display: flex; gap: 1.75rem; flex-shrink: 0; }
-    .stat-label {
-      font-family: 'Oswald', sans-serif;
-      font-size: .64rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .12em; color: var(--muted);
-    }
-    .stat-value {
-      font-family: 'Oswald', sans-serif; font-weight: 700;
-      font-size: 1.5rem; line-height: 1.1; letter-spacing: -.02em;
-    }
-    .stat-value.accent { color: var(--gold); }
-
     /* ── PANNELLO / GRIGLIA ── */
     .panel {
       display: none;
@@ -220,32 +158,6 @@
       font-family: 'Oswald', sans-serif; font-size: .86rem; font-weight: 600;
       line-height: 1.3; word-break: break-word; color: var(--white);
     }
-    .tile-num { color: var(--gold); font-weight: 900; letter-spacing: .05em; }
-    .tile-badge {
-      display: inline-block; margin-left: .3rem;
-      font-size: .6rem; font-weight: 600; letter-spacing: .05em;
-      color: var(--muted); border: 1px solid var(--panel-border);
-      border-radius: 4px; padding: .04rem .35rem; vertical-align: middle;
-    }
-
-    .progress-range {
-      -webkit-appearance: none; appearance: none;
-      width: 100%; height: 3px; margin-top: .15rem;
-      background: rgba(255,255,255,.1); border-radius: 2px;
-      accent-color: var(--gold); cursor: pointer;
-    }
-    .progress-range::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%;
-      background: var(--gold); cursor: pointer; box-shadow: 0 0 0 3px rgba(240,165,0,.2);
-    }
-    .progress-range::-moz-range-thumb {
-      width: 10px; height: 10px; border: none; border-radius: 50%; background: var(--gold); cursor: pointer;
-    }
-    .time-row {
-      display: flex; justify-content: space-between; width: 100%;
-      font-family: 'Oswald', sans-serif; font-size: .68rem; color: var(--muted);
-    }
-    .time-row .track-dur.error { color: #e63946; }
 
     .playcount {
       display: inline-flex; align-items: center; gap: .35rem;
@@ -286,15 +198,9 @@
     footer em { color: var(--gold); font-style: normal; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      .master-eq { display: none; }
-      .cb-value { max-width: 60vw; }
-    }
     @media (max-width: 480px) {
       .pad-btn { width: 64px; height: 64px; }
       .tile-title { font-size: .8rem; }
-      #control-bar { justify-content: flex-start; }
-      .cb-stats { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
@@ -323,27 +229,6 @@
     <div id="loading">
       <div class="spinner"></div>
       <p>Caricamento tracce…</p>
-    </div>
-
-    <div id="control-bar">
-      <div class="cb-status">
-        <span class="led" id="led"></span>
-        <div class="cb-text">
-          <div class="cb-label">In riproduzione</div>
-          <div class="cb-value" id="now-playing" aria-live="polite">— in attesa —</div>
-        </div>
-      </div>
-      <div class="master-eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="cb-stats">
-        <div class="stat">
-          <div class="stat-label">Tracce</div>
-          <div class="stat-value" id="count">0</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Riproduzioni</div>
-          <div class="stat-value accent" id="total-plays">0</div>
-        </div>
-      </div>
     </div>
 
     <div id="empty">
@@ -408,11 +293,6 @@
       </svg>`;
     }
 
-    function fmtTime(s) {
-      if (!isFinite(s) || isNaN(s)) return '—:——';
-      return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-    }
-
     function showError(msg) {
       const el = document.getElementById('errorbox');
       el.textContent = msg;
@@ -420,23 +300,14 @@
     }
 
     function setUI(state) {
-      document.getElementById('loading').style.display     = state === 'loading' ? 'block' : 'none';
-      document.getElementById('control-bar').style.display  = state === 'loaded'  ? 'flex'  : 'none';
-      document.getElementById('panel').style.display        = state === 'loaded'  ? 'block' : 'none';
-      document.getElementById('footer-bar').style.display   = state === 'loaded'  ? 'flex'  : 'none';
-      document.getElementById('empty').style.display        = state === 'empty'   ? 'block' : 'none';
+      document.getElementById('loading').style.display    = state === 'loading' ? 'block' : 'none';
+      document.getElementById('panel').style.display      = state === 'loaded'  ? 'block' : 'none';
+      document.getElementById('footer-bar').style.display = state === 'loaded'  ? 'flex'  : 'none';
+      document.getElementById('empty').style.display       = state === 'empty'   ? 'block' : 'none';
     }
 
     function persistCounts() {
       try { localStorage.setItem(COUNTS_KEY, JSON.stringify(playCounts)); } catch (e) { /* storage non disponibile */ }
-    }
-
-    function totalPlays() {
-      return Object.values(playCounts).reduce((a, b) => a + b, 0);
-    }
-
-    function updateTotalPlays() {
-      document.getElementById('total-plays').textContent = totalPlays();
     }
 
     function stopAll() {
@@ -447,26 +318,19 @@
         b.setAttribute('aria-pressed', 'false');
         b.setAttribute('aria-label', (b.getAttribute('aria-label') || '').replace(/^Pausa/, 'Riproduci'));
       });
-      document.querySelectorAll('.progress-range').forEach(r => r.value = 0);
-      document.querySelectorAll('.time-row span[id^="cur"]').forEach(t => t.textContent = '0:00');
-      document.getElementById('now-playing').textContent = '— in attesa —';
-      document.getElementById('control-bar').classList.remove('active');
       activeAudio = null;
     }
 
     function renderTracks() {
       const grid = document.getElementById('tracks');
       grid.innerHTML = '';
-      tracks.forEach((t, i) => grid.appendChild(buildTile(t, i)));
-      updateTotalPlays();
+      tracks.forEach(t => grid.appendChild(buildTile(t)));
     }
 
-    function buildTile(track, index) {
+    function buildTile(track) {
       const id   = uid++;
       const tile = document.createElement('div');
       tile.className = 'tile';
-      const badge = track.badge || (track.file.split('.').pop() || '').toUpperCase();
-      const num   = String(index + 1).padStart(2, '0');
       const count = playCounts[track.file] || 0;
 
       tile.innerHTML = `
@@ -474,12 +338,7 @@
           ${ballSVG(id)}
           <span class="pad-overlay">${ICO_PLAY}</span>
         </button>
-        <div class="tile-title"><span class="tile-num">${num}</span> ${escHtml(track.name)}${badge ? `<span class="tile-badge">${escHtml(badge)}</span>` : ''}</div>
-        <input type="range" class="progress-range" id="rng${id}" min="0" max="100" value="0" step="0.1" aria-label="Posizione riproduzione">
-        <div class="time-row">
-          <span id="cur${id}">0:00</span>
-          <span class="track-dur" id="dur${id}">—:——</span>
-        </div>
+        <div class="tile-title">${escHtml(track.name)}</div>
         <div class="playcount">
           <span class="pc-label">play</span>
           <span class="pc-value" id="pc${id}">${count}</span>
@@ -493,45 +352,15 @@
 
       const padBtn  = tile.querySelector('.pad-btn');
       const overlay = tile.querySelector('.pad-overlay');
-      const durEl   = tile.querySelector('#dur' + id);
-      const curEl   = tile.querySelector('#cur' + id);
-      const rng     = tile.querySelector('#rng' + id);
       const pcEl    = tile.querySelector('#pc' + id);
 
-      function resetProgress() {
-        rng.value = 0;
-        curEl.textContent = '0:00';
-      }
-
-      audio.addEventListener('loadedmetadata', () => {
-        durEl.textContent = fmtTime(audio.duration);
-      });
-      audio.addEventListener('error', () => {
-        durEl.textContent = 'Errore caricamento';
-        durEl.classList.add('error');
-      });
-      audio.addEventListener('timeupdate', () => {
-        curEl.textContent = fmtTime(audio.currentTime);
-        if (isFinite(audio.duration) && audio.duration > 0) {
-          rng.value = (audio.currentTime / audio.duration) * 100;
-        }
-      });
       audio.addEventListener('ended', () => {
         audio.currentTime = 0;
         tile.classList.remove('playing');
         overlay.innerHTML = ICO_PLAY;
         padBtn.setAttribute('aria-pressed', 'false');
         padBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
-        resetProgress();
-        document.getElementById('now-playing').textContent = '— in attesa —';
-        document.getElementById('control-bar').classList.remove('active');
         activeAudio = null;
-      });
-
-      rng.addEventListener('input', () => {
-        if (isFinite(audio.duration) && audio.duration > 0) {
-          audio.currentTime = (rng.value / 100) * audio.duration;
-        }
       });
 
       padBtn.addEventListener('click', () => {
@@ -547,19 +376,12 @@
           playCounts[track.file] = (playCounts[track.file] || 0) + 1;
           pcEl.textContent = playCounts[track.file];
           persistCounts();
-          updateTotalPlays();
-
-          const label = track.name.length > 36 ? track.name.slice(0, 36) + '…' : track.name;
-          document.getElementById('now-playing').textContent = label;
-          document.getElementById('control-bar').classList.add('active');
         } else {
           audio.pause();
           tile.classList.remove('playing');
           overlay.innerHTML = ICO_PLAY;
           padBtn.setAttribute('aria-pressed', 'false');
           padBtn.setAttribute('aria-label', 'Riproduci ' + track.name);
-          document.getElementById('now-playing').textContent = '— in attesa —';
-          document.getElementById('control-bar').classList.remove('active');
         }
       });
 
@@ -578,7 +400,6 @@
       playCounts = {};
       persistCounts();
       document.querySelectorAll('.pc-value').forEach(el => el.textContent = '0');
-      updateTotalPlays();
     });
 
     /* ── avvio: carica tracks.json ── */
@@ -596,7 +417,6 @@
 
       if (tracks.length === 0) { setUI('empty'); return; }
 
-      document.getElementById('count').textContent = tracks.length;
       renderTracks();
       setUI('loaded');
     })();
