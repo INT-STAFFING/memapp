@@ -1,0 +1,13 @@
+{
+  "buildCommand": "node build.js",
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/(.*\\.wav|.*\\.mp3|.*\\.ogg|.*\\.flac|.*\\.aac|.*\\.m4a)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Accept-Ranges", "value": "bytes" }
+      ]
+    }
+  ]
+}
