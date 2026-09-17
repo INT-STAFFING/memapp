@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MalesAPP</title>
+  <title>MemAPP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -120,6 +120,39 @@
 
     #tracks {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+    }
+
+    /* ── CATEGORIA ── */
+    .category-header {
+      display: flex; align-items: center; gap: .6rem;
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0 0 .55rem; margin-bottom: 1.1rem;
+      cursor: pointer; text-align: left;
+    }
+    .category-name {
+      font-family: 'Oswald', sans-serif; font-size: .95rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--gold-light);
+    }
+    .category-count {
+      font-family: 'Oswald', sans-serif; font-size: .7rem; font-weight: 600;
+      color: var(--muted); border: 1px solid var(--panel-border); border-radius: 999px;
+      padding: .1rem .55rem;
+    }
+    .category-header .chevron {
+      width: 16px; height: 16px; margin-left: auto; color: var(--muted);
+      transition: transform .2s ease;
+    }
+    .category.collapsed .category-header .chevron { transform: rotate(-90deg); }
+    .category-header:hover .category-name { color: var(--gold); }
+
+    .category-body { overflow: hidden; }
+    .category.collapsed .category-body { display: none; }
+
+    .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
       gap: 1.9rem 1.1rem;
@@ -220,7 +253,7 @@
 
     <header>
       <span class="eyebrow">Effetti sonori · Stadio</span>
-      <h1>Males<em>APP</em></h1>
+      <h1>Mem<em>APP</em></h1>
       <div class="divider"></div>
     </header>
 
@@ -253,21 +286,31 @@
       </div>
     </div>
 
-    <footer>MalesAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
+    <footer>MemAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
   </div>
 
   <script>
   (() => {
     const ICO_PLAY  = `<svg viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>`;
     const ICO_PAUSE = `<svg viewBox="0 0 24 24" fill="white"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="14" y="3" width="4" height="18" rx="1"/></svg>`;
-    const COUNTS_KEY = 'malesapp-playcounts';
+    const COUNTS_KEY     = 'memapp-playcounts';
+    const LEGACY_KEY     = 'malesapp-playcounts';
+    const DEFAULT_CATEGORY = 'Generali';
 
     let tracks      = [];
     let activeAudio = null;
     let uid = 0;
     let playCounts = {};
 
-    try { playCounts = JSON.parse(localStorage.getItem(COUNTS_KEY)) || {}; } catch (e) { playCounts = {}; }
+    try {
+      const stored = localStorage.getItem(COUNTS_KEY);
+      if (stored !== null) {
+        playCounts = JSON.parse(stored) || {};
+      } else {
+        const legacy = localStorage.getItem(LEGACY_KEY);
+        playCounts = legacy ? (JSON.parse(legacy) || {}) : {};
+      }
+    } catch (e) { playCounts = {}; }
 
     /* ── SVG pallone da calcio ── */
     function ballSVG(id) {
@@ -321,10 +364,50 @@
       activeAudio = null;
     }
 
+    function groupByCategory(list) {
+      const map = new Map();
+      list.forEach(t => {
+        const cat = t.category || DEFAULT_CATEGORY;
+        if (!map.has(cat)) map.set(cat, []);
+        map.get(cat).push(t);
+      });
+      return map;
+    }
+
     function renderTracks() {
-      const grid = document.getElementById('tracks');
-      grid.innerHTML = '';
-      tracks.forEach(t => grid.appendChild(buildTile(t)));
+      const root = document.getElementById('tracks');
+      root.innerHTML = '';
+
+      const groups     = groupByCategory(tracks);
+      const categories = Array.from(groups.keys()).sort((a, b) => a.localeCompare(b, 'it'));
+
+      categories.forEach(cat => root.appendChild(buildCategorySection(cat, groups.get(cat))));
+    }
+
+    function buildCategorySection(category, items) {
+      const section = document.createElement('section');
+      section.className = 'category';
+
+      section.innerHTML = `
+        <button type="button" class="category-header" aria-expanded="true">
+          <span class="category-name">${escHtml(category)}</span>
+          <span class="category-count">${items.length}</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </button>
+        <div class="category-body"><div class="category-grid"></div></div>`;
+
+      const grid = section.querySelector('.category-grid');
+      items.forEach(t => grid.appendChild(buildTile(t)));
+
+      const header = section.querySelector('.category-header');
+      header.addEventListener('click', () => {
+        const collapsed = section.classList.toggle('collapsed');
+        header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      });
+
+      return section;
     }
 
     function buildTile(track) {

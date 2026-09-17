@@ -1,47 +1,86 @@
 [
   {
-    "name": "12 anni 24 allenatori",
-    "file": "audio/12 anni 24 allenatori.mp3",
-    "badge": "MP3"
+    "name": "Hartman - Chi ha parlato",
+    "file": "audio/Hartman - Chi ha parlato.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "Domande del cazzo sempre",
-    "file": "audio/Domande del cazzo sempre.mp3",
-    "badge": "MP3"
+    "name": "Hartman - Qui vige eguaglianza",
+    "file": "audio/Hartman - Qui vige eguaglianza.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "E ridono ridono",
-    "file": "audio/E ridono ridono.mp3",
-    "badge": "MP3"
+    "name": "il Vanni - Viva idduce",
+    "file": "audio/il Vanni - Viva idduce.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "E ridono ridono - breve",
-    "file": "audio/E ridono ridono - breve.mp3",
-    "badge": "MP3"
+    "name": "Malesani - 12 anni 24 allenatori",
+    "file": "audio/Malesani - 12 anni 24 allenatori.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "Fatela finita",
-    "file": "audio/Fatela finita.mp3",
-    "badge": "MP3"
+    "name": "Malesani - Domande del cazzo sempre",
+    "file": "audio/Malesani - Domande del cazzo sempre.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "Io son la 24 ore al giono",
-    "file": "audio/Io son la 24 ore al giono.mp3",
-    "badge": "MP3"
+    "name": "Malesani - E ridono ridono",
+    "file": "audio/Malesani - E ridono ridono.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "lavoro 24 ore al giorno",
-    "file": "audio/lavoro 24 ore al giorno.mp3",
-    "badge": "MP3"
+    "name": "Malesani - E ridono ridono - breve",
+    "file": "audio/Malesani - E ridono ridono - breve.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "ma fatemi un piacere da su",
-    "file": "audio/ma fatemi un piacere da su.mp3",
-    "badge": "MP3"
+    "name": "Malesani - Fatela finita",
+    "file": "audio/Malesani - Fatela finita.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   },
   {
-    "name": "non è possibile una roba del genere",
-    "file": "audio/non è possibile una roba del genere.mp3",
-    "badge": "MP3"
+    "name": "Malesani - Io son la 24 ore al giono",
+    "file": "audio/Malesani - Io son la 24 ore al giono.mp3",
+    "badge": "MP3",
+    "category": "Generali"
+  },
+  {
+    "name": "Malesani - lavoro 24 ore al giorno",
+    "file": "audio/Malesani - lavoro 24 ore al giorno.mp3",
+    "badge": "MP3",
+    "category": "Generali"
+  },
+  {
+    "name": "Malesani - ma fatemi un piacere da su",
+    "file": "audio/Malesani - ma fatemi un piacere da su.mp3",
+    "badge": "MP3",
+    "category": "Generali"
+  },
+  {
+    "name": "Malesani - non è possibile una roba del genere",
+    "file": "audio/Malesani - non è possibile una roba del genere.mp3",
+    "badge": "MP3",
+    "category": "Generali"
+  },
+  {
+    "name": "Pacciani - poesia",
+    "file": "audio/Pacciani - poesia.mp3",
+    "badge": "MP3",
+    "category": "Generali"
+  },
+  {
+    "name": "Veramente euforico",
+    "file": "audio/Veramente euforico.mp3",
+    "badge": "MP3",
+    "category": "Generali"
   }
 ]
