@@ -1,47 +1,188 @@
 [
   {
+    "name": "Biggiogero - dignitosamente brillo",
+    "file": "audio/Biggiogero/Biggiogero - dignitosamente brillo.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
+    "name": "Biggiogero - io di solito faccio un mix",
+    "file": "audio/Biggiogero/Biggiogero - io di solito faccio un mix.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
+    "name": "Biggiogero - oddio drogarmi avvocato",
+    "file": "audio/Biggiogero/Biggiogero - oddio drogarmi avvocato.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
+    "name": "Biggiogero - perchè avevo assunto alcol e",
+    "file": "audio/Biggiogero/Biggiogero - perchè avevo assunto alcol e.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
+    "name": "Biggiogero - poco professionista molto libero",
+    "file": "audio/Biggiogero/Biggiogero - poco professionista molto libero.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
+    "name": "Biggiogero - tossico INDIPENDENTE",
+    "file": "audio/Biggiogero/Biggiogero - tossico INDIPENDENTE.mp3",
+    "badge": "MP3",
+    "category": "Biggiogero"
+  },
+  {
     "name": "12 anni 24 allenatori",
-    "file": "audio/12 anni 24 allenatori.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/12 anni 24 allenatori.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "Domande del cazzo sempre",
-    "file": "audio/Domande del cazzo sempre.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/Domande del cazzo sempre.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
+  },
+  {
+    "name": "Dramatic-dun-dun-dun-460379",
+    "file": "audio/Malesani/Dramatic-dun-dun-dun-460379.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "E ridono ridono",
-    "file": "audio/E ridono ridono.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/E ridono ridono.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "E ridono ridono - breve",
-    "file": "audio/E ridono ridono - breve.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/E ridono ridono - breve.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
+  },
+  {
+    "name": "fah",
+    "file": "audio/Malesani/fah.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "Fatela finita",
-    "file": "audio/Fatela finita.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/Fatela finita.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "Io son la 24 ore al giono",
-    "file": "audio/Io son la 24 ore al giono.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/Io son la 24 ore al giono.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "lavoro 24 ore al giorno",
-    "file": "audio/lavoro 24 ore al giorno.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/lavoro 24 ore al giorno.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "ma fatemi un piacere da su",
-    "file": "audio/ma fatemi un piacere da su.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/ma fatemi un piacere da su.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
   },
   {
     "name": "non è possibile una roba del genere",
-    "file": "audio/non è possibile una roba del genere.mp3",
-    "badge": "MP3"
+    "file": "audio/Malesani/non è possibile una roba del genere.mp3",
+    "badge": "MP3",
+    "category": "Malesani"
+  },
+  {
+    "name": "Mosconi - chi è che fa quel rumore lì",
+    "file": "audio/Mosconi/Mosconi - chi è che fa quel rumore lì.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - chi è che va avanti e indrio",
+    "file": "audio/Mosconi/Mosconi - chi è che va avanti e indrio.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - chi è quel mona che sbatte la porta",
+    "file": "audio/Mosconi/Mosconi - chi è quel mona che sbatte la porta.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - chiudi quella porta",
+    "file": "audio/Mosconi/Mosconi - chiudi quella porta.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - cos è che caduto",
+    "file": "audio/Mosconi/Mosconi - cos è che caduto.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - cos è sto telefono",
+    "file": "audio/Mosconi/Mosconi - cos è sto telefono.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "Mosconi - ma che ooh",
+    "file": "audio/Mosconi/Mosconi - ma che ooh.mp3",
+    "badge": "MP3",
+    "category": "Mosconi"
+  },
+  {
+    "name": "il Vanni - Viva idduce",
+    "file": "audio/Pacciani/il Vanni - Viva idduce.mp3",
+    "badge": "MP3",
+    "category": "Pacciani"
+  },
+  {
+    "name": "Pacciani - poesia",
+    "file": "audio/Pacciani/Pacciani - poesia.mp3",
+    "badge": "MP3",
+    "category": "Pacciani"
+  },
+  {
+    "name": "Hartman - Chi ha parlato",
+    "file": "audio/Varie/Hartman - Chi ha parlato.mp3",
+    "badge": "MP3",
+    "category": "Varie"
+  },
+  {
+    "name": "Hartman - Qui vige eguaglianza",
+    "file": "audio/Varie/Hartman - Qui vige eguaglianza.mp3",
+    "badge": "MP3",
+    "category": "Varie"
+  },
+  {
+    "name": "scoreggia",
+    "file": "audio/Varie/scoreggia.mp3",
+    "badge": "MP3",
+    "category": "Varie"
+  },
+  {
+    "name": "scoreggia 2",
+    "file": "audio/Varie/scoreggia 2.mp3",
+    "badge": "MP3",
+    "category": "Varie"
+  },
+  {
+    "name": "Veramente euforico",
+    "file": "audio/Varie/Veramente euforico.mp3",
+    "badge": "MP3",
+    "category": "Varie"
   }
 ]

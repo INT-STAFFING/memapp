@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MalesAPP</title>
+  <title>MemAPP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -120,6 +120,39 @@
 
     #tracks {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+    }
+
+    /* ── CATEGORIA ── */
+    .category-header {
+      display: flex; align-items: center; gap: .6rem;
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0 0 .55rem; margin-bottom: 1.1rem;
+      cursor: pointer; text-align: left;
+    }
+    .category-name {
+      font-family: 'Oswald', sans-serif; font-size: .95rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--gold-light);
+    }
+    .category-count {
+      font-family: 'Oswald', sans-serif; font-size: .7rem; font-weight: 600;
+      color: var(--muted); border: 1px solid var(--panel-border); border-radius: 999px;
+      padding: .1rem .55rem;
+    }
+    .category-header .chevron {
+      width: 16px; height: 16px; margin-left: auto; color: var(--muted);
+      transition: transform .2s ease;
+    }
+    .category.collapsed .category-header .chevron { transform: rotate(-90deg); }
+    .category-header:hover .category-name { color: var(--gold); }
+
+    .category-body { overflow: hidden; }
+    .category.collapsed .category-body { display: none; }
+
+    .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
       gap: 1.9rem 1.1rem;
@@ -159,16 +192,51 @@
       line-height: 1.3; word-break: break-word; color: var(--white);
     }
 
+    .tile-actions {
+      display: flex; align-items: center; justify-content: center;
+      gap: .4rem; margin-top: .1rem;
+    }
+
     .playcount {
       display: inline-flex; align-items: center; gap: .35rem;
       border: 1px solid var(--panel-border); border-radius: 4px;
-      padding: .15rem .5rem; margin-top: .1rem;
+      padding: .15rem .5rem;
     }
     .playcount .pc-label {
       font-family: 'Oswald', sans-serif; font-size: .6rem; font-weight: 600;
       text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
     }
     .playcount .pc-value { font-family: 'Oswald', sans-serif; font-size: .74rem; font-weight: 700; color: var(--gold); }
+
+    .share-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; padding: 0;
+      background: transparent; cursor: pointer;
+      border: 1px solid var(--panel-border); border-radius: 4px;
+      color: var(--muted);
+      transition: color .2s, border-color .2s, opacity .2s;
+    }
+    .share-btn:hover { color: var(--gold); border-color: rgba(240,165,0,.5); }
+    .share-btn svg { width: 14px; height: 14px; fill: currentColor; display: block; }
+    .share-btn[disabled] { opacity: .45; cursor: progress; }
+    .share-btn.busy svg { animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; left: 50%; bottom: 24px;
+      transform: translate(-50%, 16px);
+      max-width: min(420px, calc(100vw - 32px));
+      background: var(--panel); color: var(--white);
+      border: 1px solid var(--panel-border); border-radius: 8px;
+      padding: .7rem 1.1rem;
+      font-family: 'Oswald', sans-serif; font-size: .78rem; letter-spacing: .02em;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      opacity: 0; pointer-events: none; z-index: 50;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* ── BARRA INFERIORE ── */
     .footer-bar {
@@ -201,6 +269,9 @@
     @media (max-width: 480px) {
       .pad-btn { width: 64px; height: 64px; }
       .tile-title { font-size: .8rem; }
+      /* Area di tocco più generosa sui dispositivi mobili */
+      .share-btn { width: 34px; height: 34px; }
+      .share-btn svg { width: 16px; height: 16px; }
     }
   </style>
 </head>
@@ -220,7 +291,7 @@
 
     <header>
       <span class="eyebrow">Effetti sonori · Stadio</span>
-      <h1>Males<em>APP</em></h1>
+      <h1>Mem<em>APP</em></h1>
       <div class="divider"></div>
     </header>
 
@@ -253,21 +324,44 @@
       </div>
     </div>
 
-    <footer>MalesAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
+    <footer>MemAPP &nbsp;·&nbsp; <em>⚽</em> Fatto con passione</footer>
   </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
   (() => {
     const ICO_PLAY  = `<svg viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>`;
     const ICO_PAUSE = `<svg viewBox="0 0 24 24" fill="white"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="14" y="3" width="4" height="18" rx="1"/></svg>`;
-    const COUNTS_KEY = 'malesapp-playcounts';
+    const ICO_SHARE = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08a2.9 2.9 0 0 0-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 1 0-3-3c0 .24.04.47.09.7L8.04 9.81A3 3 0 1 0 6 15c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 1 0 2.92-2.92z"/></svg>`;
+    const COUNTS_KEY        = 'memapp-playcounts';
+    const LEGACY_KEY        = 'malesapp-playcounts';
+    const DEFAULT_CATEGORY  = 'Generali';
+
+    /* Tipi MIME per i formati generati da build.js */
+    const MIME_BY_EXT = {
+      mp3:  'audio/mpeg',
+      wav:  'audio/wav',
+      ogg:  'audio/ogg',
+      flac: 'audio/flac',
+      aac:  'audio/aac',
+      m4a:  'audio/mp4'
+    };
 
     let tracks      = [];
     let activeAudio = null;
     let uid = 0;
     let playCounts = {};
 
-    try { playCounts = JSON.parse(localStorage.getItem(COUNTS_KEY)) || {}; } catch (e) { playCounts = {}; }
+    try {
+      const stored = localStorage.getItem(COUNTS_KEY);
+      if (stored !== null) {
+        playCounts = JSON.parse(stored) || {};
+      } else {
+        const legacy = localStorage.getItem(LEGACY_KEY);
+        playCounts = legacy ? (JSON.parse(legacy) || {}) : {};
+      }
+    } catch (e) { playCounts = {}; }
 
     /* ── SVG pallone da calcio ── */
     function ballSVG(id) {
@@ -291,6 +385,94 @@
         </g>
         <circle cx="50" cy="50" r="46" fill="none" stroke="#444" stroke-width="1"/>
       </svg>`;
+    }
+
+    /* ── TOAST ── */
+    let toastTimer = null;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    /* ── CONDIVISIONE ── */
+    function absoluteUrl(src) {
+      return new URL(src, location.href).href;
+    }
+
+    function mimeFor(file) {
+      const ext = (file.split('.').pop() || '').toLowerCase();
+      return MIME_BY_EXT[ext] || 'application/octet-stream';
+    }
+
+    function shareFileName(track) {
+      const ext = (track.file.split('.').pop() || 'mp3').toLowerCase();
+      // Rimuove i caratteri non validi nei nomi file sui vari sistemi operativi
+      const base = track.name.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'audio';
+      return `${base}.${ext}`;
+    }
+
+    async function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    // Prova prima a condividere il file audio vero e proprio (WhatsApp, Telegram, Gmail…),
+    // poi ripiega sul link e infine sulla copia negli appunti.
+    async function shareTrack(track, btn) {
+      const url = absoluteUrl(track.file.split('/').map(encodeURIComponent).join('/'));
+
+      btn.disabled = true;
+      btn.classList.add('busy');
+      try {
+        if (navigator.canShare && navigator.share) {
+          try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const blob = await res.blob();
+            const file = new File([blob], shareFileName(track), {
+              type: blob.type && blob.type !== 'application/octet-stream' ? blob.type : mimeFor(track.file)
+            });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({ files: [file], title: track.name, text: track.name });
+              return;
+            }
+          } catch (e) {
+            if (e && e.name === 'AbortError') return; // condivisione annullata dall'utente
+            // Il file non è condivisibile su questa piattaforma: si passa al link
+          }
+        }
+
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: track.name, text: track.name, url });
+            return;
+          } catch (e) {
+            if (e && e.name === 'AbortError') return;
+          }
+        }
+
+        const copied = await copyToClipboard(url);
+        toast(copied ? 'Link copiato negli appunti' : 'Condivisione non disponibile: ' + url);
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('busy');
+      }
     }
 
     function showError(msg) {
@@ -321,10 +503,50 @@
       activeAudio = null;
     }
 
+    function groupByCategory(list) {
+      const map = new Map();
+      list.forEach(t => {
+        const cat = t.category || DEFAULT_CATEGORY;
+        if (!map.has(cat)) map.set(cat, []);
+        map.get(cat).push(t);
+      });
+      return map;
+    }
+
     function renderTracks() {
-      const grid = document.getElementById('tracks');
-      grid.innerHTML = '';
-      tracks.forEach(t => grid.appendChild(buildTile(t)));
+      const root = document.getElementById('tracks');
+      root.innerHTML = '';
+
+      const groups     = groupByCategory(tracks);
+      const categories = Array.from(groups.keys()).sort((a, b) => a.localeCompare(b, 'it'));
+
+      categories.forEach(cat => root.appendChild(buildCategorySection(cat, groups.get(cat))));
+    }
+
+    function buildCategorySection(category, items) {
+      const section = document.createElement('section');
+      section.className = 'category';
+
+      section.innerHTML = `
+        <button type="button" class="category-header" aria-expanded="true">
+          <span class="category-name">${escHtml(category)}</span>
+          <span class="category-count">${items.length}</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </button>
+        <div class="category-body"><div class="category-grid"></div></div>`;
+
+      const grid = section.querySelector('.category-grid');
+      items.forEach(t => grid.appendChild(buildTile(t)));
+
+      const header = section.querySelector('.category-header');
+      header.addEventListener('click', () => {
+        const collapsed = section.classList.toggle('collapsed');
+        header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      });
+
+      return section;
     }
 
     function buildTile(track) {
@@ -339,9 +561,12 @@
           <span class="pad-overlay">${ICO_PLAY}</span>
         </button>
         <div class="tile-title">${escHtml(track.name)}</div>
-        <div class="playcount">
-          <span class="pc-label">play</span>
-          <span class="pc-value" id="pc${id}">${count}</span>
+        <div class="tile-actions">
+          <div class="playcount">
+            <span class="pc-label">play</span>
+            <span class="pc-value" id="pc${id}">${count}</span>
+          </div>
+          <button type="button" class="share-btn" title="Condividi ${escHtml(track.name)}" aria-label="Condividi ${escHtml(track.name)}">${ICO_SHARE}</button>
         </div>`;
 
       // Codifica il nome del file per l'URL (gestisce spazi e caratteri speciali)
@@ -350,9 +575,12 @@
       audio.preload = 'metadata'; // evita di scaricare l'intero file per ogni traccia al caricamento
       audio.src     = src;
 
-      const padBtn  = tile.querySelector('.pad-btn');
-      const overlay = tile.querySelector('.pad-overlay');
-      const pcEl    = tile.querySelector('#pc' + id);
+      const padBtn   = tile.querySelector('.pad-btn');
+      const overlay  = tile.querySelector('.pad-overlay');
+      const pcEl     = tile.querySelector('#pc' + id);
+      const shareBtn = tile.querySelector('.share-btn');
+
+      shareBtn.addEventListener('click', () => { shareTrack(track, shareBtn); });
 
       audio.addEventListener('ended', () => {
         audio.currentTime = 0;
@@ -392,7 +620,9 @@
       return s
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     document.getElementById('btn-stop').addEventListener('click', stopAll);
