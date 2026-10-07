@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="36%" cy="30%" r="68%">
+      <stop offset="0%" stop-color="#f8f8f8"/><stop offset="100%" stop-color="#aaaaaa"/>
+    </radialGradient>
+    <clipPath id="cl"><circle cx="50" cy="50" r="46"/></clipPath>
+  </defs>
+  <rect width="64" height="64" rx="14.08" fill="#0a1f12"/>
+  <g transform="translate(1.2800000000000011 1.2800000000000011) scale(0.6144)">
+    <circle cx="50" cy="50" r="49" fill="none" stroke="#f0a500" stroke-width="2.4"/>
+    <circle cx="50" cy="50" r="48" fill="#111"/>
+    <circle cx="50" cy="50" r="46" fill="url(#bg)"/>
+    <g clip-path="url(#cl)" fill="#111" opacity=".85">
+      <polygon points="50,29 63,39 58,54 42,54 37,39"/>
+      <polygon points="50,4 62,13 59,27 41,27 38,13"/>
+      <polygon points="77,22 83,36 73,44 62,38 63,23"/>
+      <polygon points="79,59 74,73 61,75 55,62 66,53"/>
+      <polygon points="21,59 34,53 45,62 39,75 26,73"/>
+      <polygon points="23,22 37,23 38,38 27,44 17,36"/>
+    </g>
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#444" stroke-width="1"/>
+  </g>
+</svg>
