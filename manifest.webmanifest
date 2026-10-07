@@ -1,0 +1,20 @@
+{
+  "name": "MemAPP",
+  "short_name": "MemAPP",
+  "description": "Soundboard di clip audio meme",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1f12",
+  "theme_color": "#0a1f12",
+  "lang": "it",
+  "dir": "ltr",
+  "categories": ["entertainment", "music"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
