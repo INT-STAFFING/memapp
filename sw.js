@@ -1,6 +1,6 @@
 /* MemAPP service worker — generato da build.js (sw.template.js -> sw.js).
  * Non modificare sw.js a mano: la versione viene stampata a ogni build. */
-const VERSION      = 'b9ab2bac0b32';
+const VERSION      = '76261be6a4d5';
 const SHELL_CACHE  = 'memapp-shell-' + VERSION;
 const AUDIO_CACHE  = 'memapp-audio-v1';
 const FONT_CACHE   = 'memapp-fonts-v1';

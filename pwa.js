@@ -138,7 +138,7 @@
     document.body.appendChild(el);
   }
 
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator && navigator.serviceWorker) {
     let reloading = false;
     // Il ricaricamento avviene solo dopo il tocco su "Ricarica", mai in automatico durante una riproduzione.
     navigator.serviceWorker.addEventListener('controllerchange', () => {
