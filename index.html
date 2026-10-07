@@ -2,8 +2,18 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>MemAPP</title>
+  <meta name="description" content="MemAPP – soundboard di clip audio meme" />
+  <meta name="theme-color" content="#0a1f12" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="MemAPP" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -53,6 +63,11 @@
     .container {
       max-width: 1080px; margin: 0 auto;
       padding: 2.5rem 1.25rem 3rem;
+      /* viewport-fit=cover: evita notch, home indicator e bordi arrotondati (valori invariati senza safe-area) */
+      padding-top:    max(2.5rem, calc(env(safe-area-inset-top) + 1rem));
+      padding-bottom: max(3rem,   calc(env(safe-area-inset-bottom) + 1rem));
+      padding-left:   max(1.25rem, env(safe-area-inset-left));
+      padding-right:  max(1.25rem, env(safe-area-inset-right));
       position: relative; z-index: 1;
     }
 
@@ -224,7 +239,7 @@
 
     /* ── TOAST ── */
     #toast {
-      position: fixed; left: 50%; bottom: 24px;
+      position: fixed; left: 50%; bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px));
       transform: translate(-50%, 16px);
       max-width: min(420px, calc(100vw - 32px));
       background: var(--panel); color: var(--white);
@@ -260,6 +275,34 @@
     .fbtn-ghost:hover { color: var(--white); border-color: rgba(82,183,136,.5); }
     .fbtn-solid { background: var(--gold); color: #241300; border: 1px solid var(--gold); }
     .fbtn-solid:hover { opacity: .88; }
+
+    /* ── BANNER INSTALLAZIONE / TOAST AGGIORNAMENTO (solo PWA, aggiunti da pwa.js) ── */
+    .install-banner {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: .8rem 1rem; padding: .8rem 1.1rem; margin-bottom: 1.4rem;
+      border: 1px solid var(--card-border); border-radius: var(--radius);
+      background: var(--card-bg);
+    }
+    .install-text { font-size: .85rem; line-height: 1.4; color: var(--white); flex: 1 1 220px; }
+    .install-actions { display: flex; gap: .6rem; }
+    .install-banner .fbtn:focus-visible, #update-toast button:focus-visible {
+      outline: 2px solid var(--gold-light); outline-offset: 2px;
+    }
+    #update-toast {
+      position: fixed; left: 50%; top: max(16px, calc(env(safe-area-inset-top) + 8px));
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: .9rem; z-index: 60;
+      max-width: min(420px, calc(100vw - 32px));
+      background: var(--panel); color: var(--white);
+      border: 1px solid var(--gold); border-radius: 8px; padding: .55rem .6rem .55rem 1rem;
+      font-family: 'Oswald', sans-serif; font-size: .8rem; letter-spacing: .02em;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    }
+    #update-toast button {
+      font: inherit; font-weight: 600; cursor: pointer; padding: .35rem .9rem; border-radius: 6px;
+      background: var(--gold); color: #241300; border: 1px solid var(--gold);
+    }
+    #update-toast button[disabled] { opacity: .6; cursor: progress; }
 
     /* ── FOOTER ── */
     footer { text-align: center; font-size: .78rem; color: rgba(122,171,144,.45); }
@@ -328,6 +371,8 @@
   </div>
 
   <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/pwa.js" defer></script>
 
   <script>
   (() => {
